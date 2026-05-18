@@ -2,6 +2,8 @@
 
 A curated reading path through the cosmos. **Astronomy Hub** is a clean, responsive, and interactive web application that helps astronomy enthusiasts find books categorized by difficulty levels and specific topics.
 
+🌍 **Live Website:** [Check it out live here!](https://al1n3waj.github.io/Astronomy-Books/)
+
 ## ✨ Features
 
 * **Curated Book Collection:** Browse an extensive list of astronomy and physics books ranging from Beginner to Research level.
@@ -22,13 +24,13 @@ The project is structured into three clean files for easy maintenance:
 * `style.css`: All styles, animations, and responsive layouts (CSS Variables, Grid).
 * `script.js`: Core logic, API fetching, DOM manipulation, and search/filter functionality.
 
-## 🚀 How to Run
+## 🚀 How to Run Locally
 
 Since this is a vanilla HTML/CSS/JS project, no build tools or package managers are required!
 
-1.  Clone or download the repository.
-2.  Ensure `index.html`, `style.css`, and `script.js` are in the same folder.
-3.  Simply open `index.html` in any modern web browser.
+1. Clone or download the repository.
+2. Ensure `index.html`, `style.css`, and `script.js` are in the same folder.
+3. Simply open `index.html` in any modern web browser.
 
 ## 📚 Categories Included
 
