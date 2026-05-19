@@ -119,7 +119,7 @@ const books = [
     { title: "The New Cosmic Onion — Frank Close", level: "Particle" }
 ];
 
-// ── Open Library cover fetch ────────────────────────────────────────────
+// ── Google Books cover fetch ────────────────────────────────────────────
 const coverCache = {};
 
 async function fetchCover(bookTitle) {
@@ -127,17 +127,25 @@ async function fetchCover(bookTitle) {
     
     coverCache[bookTitle] = (async () => {
         try {
-            // Splits by Dash/Em-Dash surrounded by spaces to isolate JUST the book name
-            const cleanTitle = bookTitle.split(/\s+[—\-]\s+/)[0].trim();
-            const query = encodeURIComponent(cleanTitle);
+            // Replaces dashes with spaces to send "Title Author" to Google Books for better matching
+            const cleanQuery = bookTitle.replace(/\s+[—\-]\s+/, " ").trim();
+            const query = encodeURIComponent(cleanQuery);
+            
+            // Using Google Books API which handles Bengali titles far better
             const res = await fetch(
-                `https://openlibrary.org/search.json?q=${query}&limit=1&fields=cover_i`,
+                `https://www.googleapis.com/books/v1/volumes?q=${query}&maxResults=1`,
                 { signal: AbortSignal.timeout(5000) }
             );
             if (!res.ok) throw new Error("API error");
+            
             const data = await res.json();
-            const coverId = data.docs?.[0]?.cover_i;
-            return coverId ? `https://covers.openlibrary.org/b/id/${coverId}-M.jpg` : null;
+            let coverUrl = data.items?.[0]?.volumeInfo?.imageLinks?.thumbnail;
+            
+            if (coverUrl) {
+                // Ensure HTTPS and remove the curled page edge styling applied by Google
+                return coverUrl.replace(/^http:/, 'https:').replace('&edge=curl', '');
+            }
+            return null;
         } catch {
             return null;
         }
@@ -195,7 +203,7 @@ async function openModal(book) {
     const modal   = document.getElementById("modal");
     const content = document.getElementById("modalContent");
     
-    // THIS IS THE FIX: Isolate the pure title by stripping author after dashes
+    // Isolate the pure title specifically for external marketplace search queries
     const cleanTitle = book.title.split(/\s+[—\-]\s+/)[0].trim();
     const q          = encodeURIComponent(cleanTitle);
 
@@ -212,6 +220,9 @@ async function openModal(book) {
             </a>
             <a class="action-btn" href="https://www.goodreads.com/search?q=${q}" target="_blank" rel="noopener">
                 ⭐ Goodreads
+            </a>
+            <a class="action-btn" href="https://www.rokomari.com/search?term=${q}" target="_blank" rel="noopener">
+                🛒 Buy on Rokomari
             </a>
             <a class="action-btn" href="https://www.google.com/search?q=${q}+astronomy+book+PDF" target="_blank" rel="noopener">
                 📄 Find PDF
